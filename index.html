@@ -1574,7 +1574,7 @@
           <td>${inv.date}</td>
           <td>$${inv.total.toLocaleString()}</td>
           <td><span class="badge badge-${getStatusClass(inv.status)}">${capitalize(inv.status)}</span></td>
-          <td><button class="btn btn-outline btn-sm" onclick="downloadInvoice('${inv.id}')">Download</button></td>
+          <td><button class="btn btn-outline btn-sm" onclick="downloadInvoice('${inv.id}')"><button class="btn btn-outline btn-sm" onclick="sendInvoiceEmail('{inv.id}')">Send Email</button> 
         </tr>
       `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No invoices yet</td></tr>';
       return;
@@ -2907,7 +2907,27 @@
   }
   function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-  // Additional data stores</script>
+  // Additional data stores
+  function sendInvoiceEmail(invoiceId) {
+    const inv = invoices.find(i => i.id === invoiceId);
+    if (!inv) return alert('Invoice not found');
+    const client = clients[inv.clientIndex];
+    if (!client || !client.email) return alert('Client email not found');
+    
+    const subject = encodeURIComponent('Invoice ' + inv.number + ' from Nash Technologies');
+    const body = encodeURIComponent(
+      'Dear ' + client.name + ',\n\n' +
+      'Please find attached invoice ' + inv.number + ' for $' + parseFloat(inv.total).toFixed(2) + '.\n\n' +
+      'Due Date: ' + (inv.dueDate || 'N/A') + '\n' +
+      'Status: ' + inv.status.toUpperCase() + '\n\n' +
+      'Thank you for your business.\n' +
+      'Nash Technologies - Powered by Microtuff Solutions Inc\n' +
+      'Mandeville, Jamaica'
+    );
+    
+    window.open('mailto:' + client.email + '?subject=' + subject + '&body=' + body, '_blank');
+  }
+</script>
 
 </body>
 </html>
