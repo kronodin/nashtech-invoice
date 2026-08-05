@@ -1219,17 +1219,21 @@
   let users = JSON.parse(localStorage.getItem('nashtech_users') || '[]');
   let settings = JSON.parse(localStorage.getItem('nashtech_settings') || '{}');
 
-  // Seed default admin if no users exist
-  if (users.length === 0) {
-    users.push({
-      name: 'Admin User',
-      email: 'admin@nashtech.com',
-      password: 'nashtech',
-      role: 'admin',
-      company: 'Nash Technologies'
-    });
-    localStorage.setItem('nashtech_users', JSON.stringify(users));
+  // Ensure default admin always exists with correct credentials
+  const adminIndex = users.findIndex(u => u.email === 'admin@nashtech.com');
+  const defaultAdmin = {
+    name: 'Admin User',
+    email: 'admin@nashtech.com',
+    password: 'nashtech',
+    role: 'admin',
+    company: 'Nash Technologies'
+  };
+  if (adminIndex >= 0) {
+    users[adminIndex] = { ...users[adminIndex], ...defaultAdmin };
+  } else {
+    users.push(defaultAdmin);
   }
+  localStorage.setItem('nashtech_users', JSON.stringify(users));
 
   // Default settings
   if (!settings.companyName) {
@@ -1250,14 +1254,33 @@
     event.target.classList.add('active');
   }
 
+  function ensureAdmin() {
+    const idx = users.findIndex(u => u.email === 'admin@nashtech.com');
+    const admin = { name: 'Admin User', email: 'admin@nashtech.com', password: 'nashtech', role: 'admin', company: 'Nash Technologies' };
+    if (idx >= 0) {
+      users[idx] = { ...users[idx], ...admin };
+    } else {
+      users.push(admin);
+    }
+    localStorage.setItem('nashtech_users', JSON.stringify(users));
+  }
+
   function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
-    const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+    
+    // Try exact match first
+    let user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+    
+    // If not found and it's admin, force ensure admin exists and retry
+    if (!user && email === 'admin@nashtech.com') {
+      ensureAdmin();
+      user = users.find(u => u.email === 'admin@nashtech.com' && u.password === 'nashtech');
+    }
     
     if (!user) {
-      alert('Invalid email or password');
+      alert('Invalid email or password. Try: admin@nashtech.com / nashtech');
       return;
     }
     
@@ -1291,18 +1314,7 @@
 
   function quickLogin(role) {
     if (role === 'admin') {
-      // Ensure seeded admin exists
-      if (!users.find(u => u.email === 'admin@nashtech.com')) {
-        users.push({
-          name: 'Admin User',
-          email: 'admin@nashtech.com',
-          password: 'nashtech',
-          role: 'admin',
-          company: 'Nash Technologies'
-        });
-        localStorage.setItem('nashtech_users', JSON.stringify(users));
-      }
-      // Match seeded admin by credentials
+      ensureAdmin();
       currentUser = users.find(u => u.email === 'admin@nashtech.com');
       if (currentUser) currentUser._quickLogin = true;
     } else {
