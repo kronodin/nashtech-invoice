@@ -1630,9 +1630,6 @@
       notes: document.getElementById('invNotes').value
     };
     
-    const taxRate = parseFloat(settings.taxRate) || 0;
-    invoice.tax = invoice.subtotal * taxRate / 100;
-    invoice.total = invoice.subtotal + invoice.tax;
     invoices.push(invoice);
     localStorage.setItem('nashtech_invoices', JSON.stringify(invoices));
     document.getElementById('invoiceForm').reset();
