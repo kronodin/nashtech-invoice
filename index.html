@@ -543,6 +543,21 @@
       <div class="nav-item" data-section="invoices" onclick="showSection('invoices')">
         <span class="nav-icon">📄</span> Invoices
       </div>
+      <div class="nav-item" data-section="estimates" onclick="showSection('estimates')">
+        <span class="nav-icon">📝</span> Estimates
+      </div>
+      <div class="nav-item" data-section="services" onclick="showSection('services')">
+        <span class="nav-icon">🛠️</span> Services
+      </div>
+      <div class="nav-item" data-section="catalog" onclick="showSection('catalog')">
+        <span class="nav-icon">📦</span> Catalog
+      </div>
+      <div class="nav-item" data-section="expenses" onclick="showSection('expenses')">
+        <span class="nav-icon">💸</span> Expenses
+      </div>
+      <div class="nav-item" data-section="reports" onclick="showSection('reports')">
+        <span class="nav-icon">📊</span> Reports
+      </div>
       <div class="nav-item" data-section="clients" onclick="showSection('clients')" id="navClients">
         <span class="nav-icon">👥</span> Clients
       </div>
@@ -551,6 +566,9 @@
       </div>
       <div class="nav-item" data-section="users" onclick="showSection('users')" id="navUsers">
         <span class="nav-icon">👤</span> Users
+      </div>
+      <div class="nav-item" data-section="backup" onclick="showSection('backup')">
+        <span class="nav-icon">💾</span> Backup
       </div>
       <div class="nav-item" data-section="settings" onclick="showSection('settings')" id="navSettings">
         <span class="nav-icon">⚙️</span> Settings
@@ -712,6 +730,20 @@
               </div>
               <button type="button" class="btn btn-outline btn-sm" onclick="addLineItem()" style="margin-top:0.5rem">+ Add Item</button>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Discount Type</label>
+                <select id="invDiscountType" onchange="updateInvoiceTotal()">
+                  <option value="none">No Discount</option>
+                  <option value="percentage">Percentage (%)</option>
+                  <option value="fixed">Fixed Amount ($)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Discount Value</label>
+                <input type="number" id="invDiscountValue" step="0.01" min="0" value="0" onchange="updateInvoiceTotal()" oninput="updateInvoiceTotal()">
+              </div>
+            </div>
             <div class="form-group">
               <label>Notes</label>
               <textarea id="invNotes" rows="3" placeholder="Payment terms, thank you note, etc."></textarea>
@@ -748,19 +780,45 @@
           </table>
         </div>
       </div>
+      <!-- Backup -->
+      <div class="section" id="backup">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Backup & Export</div></div>
+          <p style="color:var(--muted);margin-bottom:1.5rem">Download all your data as JSON backup or export invoices to CSV. Keep regular backups to prevent data loss.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="downloadBackup()">Download Full Backup (JSON)</button>
+            <button class="btn btn-outline" onclick="exportInvoicesCSV()">Export Invoices (CSV)</button>
+            <button class="btn btn-outline" onclick="exportClientsCSV()">Export Clients (CSV)</button>
+            <button class="btn btn-outline" onclick="exportExpensesCSV()">Export Expenses (CSV)</button>
+          </div>
+          <div style="margin-top:1.5rem;padding:1rem;background:#f8fafc;border-radius:0.5rem">
+            <p style="font-weight:600;margin-bottom:0.5rem">Import Data</p>
+            <input type="file" id="importFile" accept=".json" onchange="importBackup(this)" style="margin-bottom:0.5rem">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()">Select Backup File</button>
+            <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Import will merge data. Existing items with same IDs will be updated.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Settings -->
       <div class="section" id="settings">
         <div class="card">
-          <div class="card-header"><div class="card-title">Company Settings</div></div>
+          <div class="card-header"><div class="card-title">Company Profile</div></div>
           <form id="settingsForm">
-            <div class="form-group">
-              <label>Company Name</label>
-              <input type="text" id="companyName" value="Nash Technologies">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Registered Name</label>
+                <input type="text" id="companyRegisteredName" placeholder="Legal registered name">
+              </div>
+              <div class="form-group">
+                <label>Trading Name</label>
+                <input type="text" id="companyTradingName" placeholder="Trading name">
+              </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="companyEmail" value="info@nashtech.com">
+                <label>TRN (Tax Registration Number)</label>
+                <input type="text" id="companyTRN" placeholder="Tax ID / TRN">
               </div>
               <div class="form-group">
                 <label>Phone</label>
@@ -768,10 +826,57 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="companyEmail" value="info@nashtech.com">
+            </div>
+            <div class="form-group">
               <label>Address</label>
               <textarea id="companyAddress" rows="2">Mandeville, Jamaica</textarea>
             </div>
-            <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Invoice Prefix</label>
+                <input type="text" id="invoicePrefix" value="INV" placeholder="INV">
+              </div>
+              <div class="form-group">
+                <label>Estimate Prefix</label>
+                <input type="text" id="estimatePrefix" value="EST" placeholder="EST">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Default Tax Rate (%)</label>
+                <input type="number" id="taxRate" value="0" step="0.1" min="0" max="100">
+              </div>
+              <div class="form-group">
+                <label>Default Currency</label>
+                <select id="companyCurrency">
+                  <option value="JMD">JMD - Jamaican Dollar</option>
+                  <option value="USD">USD - US Dollar</option>
+                  <option value="EUR">EUR - Euro</option>
+                  <option value="GBP">GBP - British Pound</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Bank / Payment Details</label>
+              <textarea id="companyBankDetails" rows="3" placeholder="Bank name, account number, routing number, etc.">NCB Account — Nashtech Computer and Accessories LTD</textarea>
+            </div>
+            <div class="form-group">
+              <label>Default Invoice Terms</label>
+              <textarea id="companyInvoiceTerms" rows="2" placeholder="Payment terms, thank you message, etc.">Payment due within 14 days of invoice date. Thank you for your business.</textarea>
+            </div>
+            <div class="form-group">
+              <label>Company Logo</label>
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem">
+                <img id="logoPreview" src="assets/logo.svg" style="width:60px;height:60px;border:1px solid var(--border);border-radius:0.5rem;padding:0.25rem">
+                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('logoUpload').click()">Upload Logo</button>
+                <input type="file" id="logoUpload" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+              </div>
+              <input type="text" id="companyLogo" value="assets/logo.svg" placeholder="Logo path or URL">
+              <small style="color:var(--muted);font-size:0.75rem">Upload an image or enter URL</small>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Profile</button>
           </form>
         </div>
       </div>
@@ -832,6 +937,202 @@
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeUserModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- Service Modal -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="serviceModalTitle">Add Service</h3>
+      <button class="close-btn" onclick="closeServiceModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="serviceForm">
+        <div class="form-group">
+          <label>Service Name *</label>
+          <input type="text" id="serviceName" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="serviceDesc" rows="2"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Rate *</label>
+            <input type="number" id="serviceRate" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="serviceUnit">
+              <option value="hour">Hour</option>
+              <option value="day">Day</option>
+              <option value="project">Project</option>
+              <option value="flat">Flat Rate</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="serviceEditIndex" value="-1">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeServiceModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">Save Service</button>
+    </div>
+  </div>
+</div>
+
+<!-- Catalog Modal -->
+<div class="modal-overlay" id="catalogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="catalogModalTitle">Add Product</h3>
+      <button class="close-btn" onclick="closeCatalogModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="catalogForm">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" id="catalogName" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="catalogCategory">
+              <option value="Solar Panels">Solar Panels</option>
+              <option value="Inverters">Inverters</option>
+              <option value="Batteries">Batteries</option>
+              <option value="Mounting">Mounting</option>
+              <option value="Wiring">Wiring</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price *</label>
+            <input type="number" id="catalogPrice" step="0.01" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stock Qty</label>
+          <input type="number" id="catalogStock" value="0">
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="catalogNotes" rows="2"></textarea>
+        </div>
+        <input type="hidden" id="catalogEditIndex" value="-1">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeCatalogModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCatalog()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="expenseModalTitle">Add Expense</h3>
+      <button class="close-btn" onclick="closeExpenseModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="expenseForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="expenseDate" required>
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="expenseCategory">
+              <option value="Materials">Materials</option>
+              <option value="Transport">Transport</option>
+              <option value="Labor">Labor</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Office">Office</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <input type="text" id="expenseDesc" required>
+        </div>
+        <div class="form-group">
+          <label>Amount *</label>
+          <input type="number" id="expenseAmount" step="0.01" required>
+        </div>
+        <input type="hidden" id="expenseEditIndex" value="-1">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeExpenseModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveExpense()">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- Estimate Modal -->
+<div class="modal-overlay" id="estimateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="estimateModalTitle">New Estimate</h3>
+      <button class="close-btn" onclick="closeEstimateModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="estimateForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Client *</label>
+            <select id="estClient" required></select>
+          </div>
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="estDate" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Valid Until</label>
+            <input type="date" id="estValid">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="estStatus">
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="accepted">Accepted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Line Items</label>
+          <div id="estLineItems">
+            <div class="form-row line-item">
+              <input type="text" placeholder="Description" class="item-desc">
+              <input type="number" placeholder="Qty" class="item-qty" value="1" min="1">
+              <input type="number" placeholder="Rate" class="item-rate" step="0.01">
+              <button type="button" class="btn btn-outline btn-sm" onclick="removeLineItem(this)">✕</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addLineItem()" style="margin-top:0.5rem">+ Add Item</button>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="estNotes" rows="2"></textarea>
+        </div>
+        <input type="hidden" id="estimateEditIndex" value="-1">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEstimateModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEstimate()">Save Estimate</button>
+      <button class="btn btn-success" onclick="saveEstimateAndConvert()">Save & Convert to Invoice</button>
     </div>
   </div>
 </div>
@@ -1033,6 +1334,11 @@
     if (sectionId === 'invoices') renderInvoices();
     if (sectionId === 'clients') renderClients();
     if (sectionId === 'users') renderUsers();
+    if (sectionId === 'services') renderServices();
+    if (sectionId === 'catalog') renderCatalog();
+    if (sectionId === 'expenses') renderExpenses();
+    if (sectionId === 'estimates') renderEstimates();
+    if (sectionId === 'reports') renderReports();
     if (sectionId === 'dashboard') renderDashboard();
   }
 
@@ -1201,6 +1507,32 @@
     return items;
   }
 
+  function updateInvoiceTotal() {
+    const items = getLineItems();
+    const subtotal = items.reduce((sum, i) => sum + i.total, 0);
+    const discountType = document.getElementById('invDiscountType').value;
+    const discountValue = parseFloat(document.getElementById('invDiscountValue').value) || 0;
+    let discount = 0;
+    if (discountType === 'percentage') {
+      discount = subtotal * (discountValue / 100);
+    } else if (discountType === 'fixed') {
+      discount = discountValue;
+    }
+    const taxRate = parseFloat(settings.taxRate) || 0;
+    const tax = (subtotal - discount) * taxRate / 100;
+    const total = subtotal - discount + tax;
+    
+    const totalDisplay = document.getElementById('invoiceTotalDisplay');
+    if (totalDisplay) {
+      totalDisplay.innerHTML = `
+        <p><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</p>
+        ${discount > 0 ? `<p><strong>Discount (${discountType === 'percentage' ? discountValue + '%' : '$' + discountValue.toFixed(2)}):</strong> -$${discount.toFixed(2)}</p>` : ''}
+        <p><strong>Tax (${taxRate}%):</strong> $${tax.toFixed(2)}</p>
+        <p style="font-size:1.2rem;font-weight:bold;color:var(--primary)">Total: $${total.toFixed(2)}</p>
+      `;
+    }
+  }
+
   function saveInvoice() {
     const clientIndex = document.getElementById('invClient').value;
     const client = clients[clientIndex];
@@ -1209,6 +1541,19 @@
     const items = getLineItems();
     if (items.length === 0) return alert('Add at least one line item');
     
+    const subtotal = items.reduce((sum, i) => sum + i.total, 0);
+    const discountType = document.getElementById('invDiscountType').value;
+    const discountValue = parseFloat(document.getElementById('invDiscountValue').value) || 0;
+    let discount = 0;
+    if (discountType === 'percentage') {
+      discount = subtotal * (discountValue / 100);
+    } else if (discountType === 'fixed') {
+      discount = discountValue;
+    }
+    const taxRate = parseFloat(settings.taxRate) || 0;
+    const tax = (subtotal - discount) * taxRate / 100;
+    const total = subtotal - discount + tax;
+
     const invoice = {
       id: Date.now().toString(),
       number: (settings.invoicePrefix || 'INV') + '-' + String(invoices.length + 1).padStart(4, '0'),
@@ -1218,9 +1563,12 @@
       dueDate: document.getElementById('invDue').value,
       status: document.getElementById('invStatus').value,
       items: items,
-      subtotal: items.reduce((sum, i) => sum + i.total, 0),
-      tax: 0,
-      total: items.reduce((sum, i) => sum + i.total, 0),
+      subtotal: subtotal,
+      discountType: discountType,
+      discountValue: discountValue,
+      discount: discount,
+      tax: tax,
+      total: total,
       notes: document.getElementById('invNotes').value
     };
     
@@ -1240,6 +1588,28 @@
       const lastInvoice = invoices[invoices.length - 1];
       if (lastInvoice) downloadInvoice(lastInvoice.id);
     }, 100);
+  }
+
+  function recordPayment(id) {
+    const invoice = invoices.find(i => i.id === id);
+    if (!invoice) return;
+    const amount = prompt('Record payment for ' + invoice.number + '\nTotal: $' + invoice.total.toFixed(2) + '\nEnter payment amount:');
+    if (!amount || isNaN(parseFloat(amount))) return;
+    const payment = parseFloat(amount);
+    if (payment <= 0 || payment > invoice.total) {
+      alert('Invalid payment amount');
+      return;
+    }
+    invoice.paid = (invoice.paid || 0) + payment;
+    if (invoice.paid >= invoice.total) {
+      invoice.status = 'paid';
+    } else {
+      invoice.status = 'partial';
+    }
+    localStorage.setItem('nashtech_invoices', JSON.stringify(invoices));
+    renderInvoices();
+    renderDashboard();
+    alert('Payment of $' + payment.toFixed(2) + ' recorded');
   }
 
   function deleteInvoice(id) {
@@ -1337,7 +1707,8 @@
         <div class="totals">
           <table>
             <tr><td style="text-align:right">Subtotal:</td><td style="text-align:right">$${invoice.subtotal.toFixed(2)}</td></tr>
-            <tr><td style="text-align:right">Tax (${settings.taxRate || 0}%):</td><td style="text-align:right">$${(invoice.subtotal * (settings.taxRate || 0) / 100).toFixed(2)}</td></tr>
+            ${invoice.discount > 0 ? `<tr><td style="text-align:right">Discount (${invoice.discountType === 'percentage' ? invoice.discountValue + '%' : '$' + invoice.discountValue.toFixed(2)}):</td><td style="text-align:right">-$${invoice.discount.toFixed(2)}</td></tr>` : ''}
+            <tr><td style="text-align:right">Tax (${settings.taxRate || 0}%):</td><td style="text-align:right">$${invoice.tax.toFixed(2)}</td></tr>
             <tr class="total-row"><td style="text-align:right">Total:</td><td style="text-align:right">$${invoice.total.toFixed(2)}</td></tr>
           </table>
         </div>
@@ -1367,12 +1738,688 @@
     alert('Settings saved');
   }
 
+
+  // Services
+  function renderServices() {
+    const tbody = document.getElementById('servicesList');
+    tbody.innerHTML = services.map((svc, i) => `
+      <tr>
+        <td><strong>${svc.name}</strong></td>
+        <td>${svc.description || '-'}</td>
+        <td>$${parseFloat(svc.rate).toFixed(2)}</td>
+        <td>${svc.unit || 'flat'}</td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="editService(${i})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteService(${i})">Delete</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No services yet</td></tr>';
+  }
+
+  function openServiceModal() {
+    document.getElementById('serviceModalTitle').textContent = 'Add Service';
+    document.getElementById('serviceForm').reset();
+    document.getElementById('serviceEditIndex').value = '-1';
+    document.getElementById('serviceModal').classList.add('active');
+  }
+
+  function closeServiceModal() { document.getElementById('serviceModal').classList.remove('active'); }
+
+  function editService(i) {
+    const svc = services[i];
+    document.getElementById('serviceName').value = svc.name;
+    document.getElementById('serviceDesc').value = svc.description || '';
+    document.getElementById('serviceRate').value = svc.rate;
+    document.getElementById('serviceUnit').value = svc.unit || 'flat';
+    document.getElementById('serviceEditIndex').value = i;
+    document.getElementById('serviceModalTitle').textContent = 'Edit Service';
+    document.getElementById('serviceModal').classList.add('active');
+  }
+
+  function saveService() {
+    const idx = parseInt(document.getElementById('serviceEditIndex').value);
+    const svc = {
+      name: document.getElementById('serviceName').value,
+      description: document.getElementById('serviceDesc').value,
+      rate: document.getElementById('serviceRate').value,
+      unit: document.getElementById('serviceUnit').value
+    };
+    if (!svc.name || !svc.rate) return alert('Name and rate required');
+    if (idx >= 0) services[idx] = svc; else services.push(svc);
+    localStorage.setItem('nashtech_services', JSON.stringify(services));
+    closeServiceModal(); renderServices();
+  }
+
+  function deleteService(i) {
+    if (confirm('Delete this service?')) {
+      services.splice(i, 1);
+      localStorage.setItem('nashtech_services', JSON.stringify(services));
+      renderServices();
+    }
+  }
+
+  // Catalog
+  function renderCatalog() {
+    const tbody = document.getElementById('catalogList');
+    tbody.innerHTML = catalog.map((item, i) => `
+      <tr>
+        <td><strong>${item.name}</strong></td>
+        <td>${item.category}</td>
+        <td>$${parseFloat(item.price).toFixed(2)}</td>
+        <td>${item.stock || 0}</td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="editCatalog(${i})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCatalog(${i})">Delete</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No products yet</td></tr>';
+  }
+
+  function openCatalogModal() {
+    document.getElementById('catalogModalTitle').textContent = 'Add Product';
+    document.getElementById('catalogForm').reset();
+    document.getElementById('catalogEditIndex').value = '-1';
+    document.getElementById('catalogModal').classList.add('active');
+  }
+
+  function closeCatalogModal() { document.getElementById('catalogModal').classList.remove('active'); }
+
+  function editCatalog(i) {
+    const item = catalog[i];
+    document.getElementById('catalogName').value = item.name;
+    document.getElementById('catalogCategory').value = item.category;
+    document.getElementById('catalogPrice').value = item.price;
+    document.getElementById('catalogStock').value = item.stock || 0;
+    document.getElementById('catalogNotes').value = item.notes || '';
+    document.getElementById('catalogEditIndex').value = i;
+    document.getElementById('catalogModalTitle').textContent = 'Edit Product';
+    document.getElementById('catalogModal').classList.add('active');
+  }
+
+  function saveCatalog() {
+    const idx = parseInt(document.getElementById('catalogEditIndex').value);
+    const item = {
+      name: document.getElementById('catalogName').value,
+      category: document.getElementById('catalogCategory').value,
+      price: document.getElementById('catalogPrice').value,
+      stock: document.getElementById('catalogStock').value,
+      notes: document.getElementById('catalogNotes').value
+    };
+    if (!item.name || !item.price) return alert('Name and price required');
+    if (idx >= 0) catalog[idx] = item; else catalog.push(item);
+    localStorage.setItem('nashtech_catalog', JSON.stringify(catalog));
+    closeCatalogModal(); renderCatalog();
+  }
+
+  function deleteCatalog(i) {
+    if (confirm('Delete this product?')) {
+      catalog.splice(i, 1);
+      localStorage.setItem('nashtech_catalog', JSON.stringify(catalog));
+      renderCatalog();
+    }
+  }
+
+  // Expenses
+  function renderExpenses() {
+    const tbody = document.getElementById('expensesList');
+    tbody.innerHTML = expenses.slice().reverse().map((exp, i) => {
+      const originalIndex = expenses.length - 1 - i;
+      return `
+        <tr>
+          <td>${exp.date}</td>
+          <td>${exp.category}</td>
+          <td>${exp.description}</td>
+          <td>$${parseFloat(exp.amount).toFixed(2)}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="editExpense(${originalIndex})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteExpense(${originalIndex})">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No expenses yet</td></tr>';
+  }
+
+  function openExpenseModal() {
+    document.getElementById('expenseModalTitle').textContent = 'Add Expense';
+    document.getElementById('expenseForm').reset();
+    document.getElementById('expenseDate').valueAsDate = new Date();
+    document.getElementById('expenseEditIndex').value = '-1';
+    document.getElementById('expenseModal').classList.add('active');
+  }
+
+  function closeExpenseModal() { document.getElementById('expenseModal').classList.remove('active'); }
+
+  function editExpense(i) {
+    const exp = expenses[i];
+    document.getElementById('expenseDate').value = exp.date;
+    document.getElementById('expenseCategory').value = exp.category;
+    document.getElementById('expenseDesc').value = exp.description;
+    document.getElementById('expenseAmount').value = exp.amount;
+    document.getElementById('expenseEditIndex').value = i;
+    document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+    document.getElementById('expenseModal').classList.add('active');
+  }
+
+  function saveExpense() {
+    const idx = parseInt(document.getElementById('expenseEditIndex').value);
+    const exp = {
+      date: document.getElementById('expenseDate').value,
+      category: document.getElementById('expenseCategory').value,
+      description: document.getElementById('expenseDesc').value,
+      amount: document.getElementById('expenseAmount').value
+    };
+    if (!exp.date || !exp.description || !exp.amount) return alert('All fields required');
+    if (idx >= 0) expenses[idx] = exp; else expenses.push(exp);
+    localStorage.setItem('nashtech_expenses', JSON.stringify(expenses));
+    closeExpenseModal(); renderExpenses();
+  }
+
+  function deleteExpense(i) {
+    if (confirm('Delete this expense?')) {
+      expenses.splice(i, 1);
+      localStorage.setItem('nashtech_expenses', JSON.stringify(expenses));
+      renderExpenses();
+    }
+  }
+
+  // Estimates
+  function renderEstimates() {
+    const tbody = document.getElementById('estimatesList');
+    tbody.innerHTML = estimates.slice().reverse().map((est, i) => {
+      const originalIndex = estimates.length - 1 - i;
+      return `
+        <tr>
+          <td><strong>${est.number}</strong></td>
+          <td>${est.clientName}</td>
+          <td>${est.date}</td>
+          <td>$${est.total.toLocaleString()}</td>
+          <td><span class="badge badge-${getStatusClass(est.status)}">${capitalize(est.status)}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="downloadEstimate('${est.id}')">View</button>
+            <button class="btn btn-success btn-sm" onclick="convertEstimateToInvoice('${est.id}')">Convert</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteEstimate('${est.id}')">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No estimates yet</td></tr>';
+  }
+
+  function openEstimateModal() {
+    document.getElementById('estimateModalTitle').textContent = 'New Estimate';
+    document.getElementById('estimateForm').reset();
+    document.getElementById('estimateDate').valueAsDate = new Date();
+    document.getElementById('estValid').valueAsDate = (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d; })();
+    document.getElementById('estimateEditIndex').value = '-1';
+    populateEstimateClientSelect();
+    document.getElementById('estimateModal').classList.add('active');
+  }
+
+  function closeEstimateModal() { document.getElementById('estimateModal').classList.remove('active'); }
+
+  function populateEstimateClientSelect() {
+    const select = document.getElementById('estClient');
+    select.innerHTML = clients.map((c, i) => `<option value="${i}">${c.name}${c.company ? ' - ' + c.company : ''}</option>`).join('');
+    if (clients.length === 0) select.innerHTML = '<option value="">No clients - add one first</option>';
+  }
+
+  function getEstimateLineItems() {
+    const items = [];
+    document.querySelectorAll('#estLineItems .line-item').forEach(row => {
+      const desc = row.querySelector('.item-desc').value.trim();
+      const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+      const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+      if (desc && qty > 0 && rate > 0) items.push({ desc, qty, rate, total: qty * rate });
+    });
+    return items;
+  }
+
+  function saveEstimate() {
+    const clientIndex = document.getElementById('estClient').value;
+    const client = clients[clientIndex];
+    if (!client) return alert('Please add a client first');
+    const items = getEstimateLineItems();
+    if (items.length === 0) return alert('Add at least one line item');
+    const idx = parseInt(document.getElementById('estimateEditIndex').value);
+    const est = {
+      id: Date.now().toString(),
+      number: 'EST-' + String(estimates.length + 1).padStart(4, '0'),
+      clientName: client.name,
+      clientEmail: client.email,
+      date: document.getElementById('estDate').value,
+      validUntil: document.getElementById('estValid').value,
+      status: document.getElementById('estStatus').value,
+      items: items,
+      subtotal: items.reduce((sum, i) => sum + i.total, 0),
+      tax: 0,
+      total: items.reduce((sum, i) => sum + i.total, 0),
+      notes: document.getElementById('estNotes').value
+    };
+    if (idx >= 0) estimates[idx] = est; else estimates.push(est);
+    localStorage.setItem('nashtech_estimates', JSON.stringify(estimates));
+    closeEstimateModal();
+    renderEstimates();
+    alert('Estimate saved');
+  }
+
+  function saveEstimateAndConvert() {
+    saveEstimate();
+    setTimeout(() => {
+      const lastEstimate = estimates[estimates.length - 1];
+      if (lastEstimate) convertEstimateToInvoice(lastEstimate.id);
+    }, 100);
+  }
+
+  function convertEstimateToInvoice(id) {
+    const est = estimates.find(e => e.id === id);
+    if (!est) return;
+    est.status = 'accepted';
+    localStorage.setItem('nashtech_estimates', JSON.stringify(estimates));
+    const invoice = {
+      id: Date.now().toString(),
+      number: (settings.invoicePrefix || 'INV') + '-' + String(invoices.length + 1).padStart(4, '0'),
+      clientName: est.clientName,
+      clientEmail: est.clientEmail,
+      date: new Date().toISOString().split('T')[0],
+      dueDate: (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })(),
+      status: 'sent',
+      items: est.items,
+      subtotal: est.subtotal,
+      tax: est.tax,
+      total: est.total,
+      notes: est.notes
+    };
+    invoices.push(invoice);
+    localStorage.setItem('nashtech_invoices', JSON.stringify(invoices));
+    renderEstimates();
+    alert('Estimate converted to invoice ' + invoice.number);
+  }
+
+  function deleteEstimate(id) {
+    if (confirm('Delete this estimate?')) {
+      estimates = estimates.filter(e => e.id !== id);
+      localStorage.setItem('nashtech_estimates', JSON.stringify(estimates));
+      renderEstimates();
+    }
+  }
+
+  function downloadEstimate(id) {
+    const est = estimates.find(e => e.id === id);
+    if (!est) return;
+    const client = clients.find(c => c.name === est.clientName) || {};
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Estimate ${est.number}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; color: #1e293b; }
+          .header { display: flex; justify-content: space-between; margin-bottom: 40px; padding-bottom: 1rem; border-bottom: 2px solid #2563eb; }
+          .company { font-size: 24px; font-weight: bold; color: #2563eb; }
+          .estimate-title { font-size: 36px; color: #e2e8f0; text-align: right; }
+          .info { display: flex; justify-content: space-between; margin-bottom: 40px; }
+          .info-box { width: 45%; }
+          .info-box h3 { font-size: 14px; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+          table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+          th { background: #f1f5f9; padding: 12px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+          td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+          .totals { margin-left: auto; width: 300px; }
+          .totals table { width: 100%; }
+          .totals td { padding: 8px; border: none; }
+          .total-row { font-weight: bold; font-size: 18px; border-top: 2px solid #2563eb; }
+          .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="company">${settings.companyName || 'Nash Technologies'}</div>
+            <p>${settings.companyAddress || 'Mandeville, Jamaica'}</p>
+            <p>${settings.companyEmail || ''}</p>
+            <p>${settings.companyPhone || ''}</p>
+          </div>
+          <div class="estimate-title">ESTIMATE</div>
+        </div>
+        <div class="info">
+          <div class="info-box">
+            <h3>Bill To</h3>
+            <p><strong>${client.name || est.clientName}</strong></p>
+            <p>${client.company || ''}</p>
+            <p>${client.email || ''}</p>
+            <p>${client.phone || ''}</p>
+          </div>
+          <div class="info-box" style="text-align: right">
+            <p><strong>Estimate #:</strong> ${est.number}</p>
+            <p><strong>Date:</strong> ${est.date}</p>
+            <p><strong>Valid Until:</strong> ${est.validUntil || 'N/A'}</p>
+            <p><strong>Status:</strong> ${capitalize(est.status)}</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th style="text-align:center">Qty</th>
+              <th style="text-align:right">Rate</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${est.items.map(item => `
+              <tr>
+                <td>${item.desc}</td>
+                <td style="text-align:center">${item.qty}</td>
+                <td style="text-align:right">$${item.rate.toFixed(2)}</td>
+                <td style="text-align:right">$${item.total.toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div class="totals">
+          <table>
+            <tr><td style="text-align:right">Subtotal:</td><td style="text-align:right">$${est.subtotal.toFixed(2)}</td></tr>
+            <tr><td style="text-align:right">Tax:</td><td style="text-align:right">$0.00</td></tr>
+            <tr class="total-row"><td style="text-align:right">Total:</td><td style="text-align:right">$${est.total.toFixed(2)}</td></tr>
+          </table>
+        </div>
+        ${est.notes ? `<div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;"><strong>Notes:</strong><p>${est.notes}</p></div>` : ''}
+              <!-- Services -->
+      <div class="section" id="services">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Services</div>
+            <button class="btn btn-primary btn-sm" onclick="openServiceModal()">+ Add Service</button>
+          </div>
+          <table>
+            <thead><tr><th>Service Name</th><th>Description</th><th>Rate</th><th>Unit</th><th>Actions</th></tr></thead>
+            <tbody id="servicesList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Catalog -->
+      <div class="section" id="catalog">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Product Catalog</div>
+            <button class="btn btn-primary btn-sm" onclick="openCatalogModal()">+ Add Product</button>
+          </div>
+          <table>
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+            <tbody id="catalogList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Expenses -->
+      <div class="section" id="expenses">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Expenses</div>
+            <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">+ Add Expense</button>
+          </div>
+          <table>
+            <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr></thead>
+            <tbody id="expensesList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Estimates -->
+      <div class="section" id="estimates">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Estimates</div>
+            <button class="btn btn-primary btn-sm" onclick="openEstimateModal()">+ New Estimate</button>
+          </div>
+          <table>
+            <thead><tr><th>Estimate #</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="estimatesList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reports -->
+      <div class="section" id="reports">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="reportRevenue">$0</div></div>
+          <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="reportExpenses">$0</div></div>
+          <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value" id="reportProfit">$0</div></div>
+          <div class="stat-card"><div class="stat-label">Outstanding Estimates</div><div class="stat-value" id="reportEstimates">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Transactions</div></div>
+          <table>
+            <thead><tr><th>Type</th><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="reportsTransactions"></tbody>
+          </table>
+        </div>
+      </div>
+
+<div class="footer">
+          <p><strong>Nash Technologies</strong> — Powered by <strong>Microtuff Solutions</strong></p>
+          <p>Mandeville, Jamaica | 1(876) 359-9983</p>
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  }
+
+  // Reports
+  function renderReports() {
+    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total, 0);
+    const totalExpenses = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    const netProfit = totalRevenue - totalExpenses;
+    const outstandingEstimates = estimates.filter(e => e.status === 'sent' || e.status === 'draft').length;
+
+    document.getElementById('reportRevenue').textContent = '$' + totalRevenue.toLocaleString();
+    document.getElementById('reportExpenses').textContent = '$' + totalExpenses.toLocaleString();
+    document.getElementById('reportProfit').textContent = '$' + netProfit.toLocaleString();
+    document.getElementById('reportProfit').style.color = netProfit >= 0 ? '#16a34a' : '#dc2626';
+    document.getElementById('reportEstimates').textContent = outstandingEstimates;
+
+    // Build combined transactions list
+    const transactions = [];
+    invoices.forEach(inv => {
+      transactions.push({
+        type: 'Invoice',
+        date: inv.date,
+        description: inv.number + ' - ' + inv.clientName,
+        amount: inv.total,
+        status: inv.status
+      });
+    });
+    expenses.forEach(exp => {
+      transactions.push({
+        type: 'Expense',
+        date: exp.date,
+        description: exp.category + ' - ' + exp.description,
+        amount: -parseFloat(exp.amount),
+        status: 'paid'
+      });
+    });
+    estimates.forEach(est => {
+      transactions.push({
+        type: 'Estimate',
+        date: est.date,
+        description: est.number + ' - ' + est.clientName,
+        amount: est.total,
+        status: est.status
+      });
+    });
+
+    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const tbody = document.getElementById('reportsTransactions');
+    tbody.innerHTML = transactions.slice(0, 50).map(t => `
+      <tr>
+        <td><span class="badge badge-${t.type === 'Expense' ? 'danger' : t.type === 'Invoice' ? 'success' : 'info'}">${t.type}</span></td>
+        <td>${t.date}</td>
+        <td>${t.description}</td>
+        <td style="color:${t.amount < 0 ? '#dc2626' : '#16a34a'}">${t.amount < 0 ? '-' : ''}$${Math.abs(t.amount).toFixed(2)}</td>
+        <td>${capitalize(t.status)}</td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No transactions yet</td></tr>';
+  }
+
+  function downloadBackup() {
+    const backup = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      company: settings.companyName || 'Nash Technologies',
+      data: {
+        clients: clients,
+        invoices: invoices,
+        users: users,
+        services: services,
+        catalog: catalog,
+        expenses: expenses,
+        estimates: estimates,
+        settings: settings
+      }
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nashtech-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('Backup downloaded successfully');
+  }
+
+  function importBackup(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const backup = JSON.parse(e.target.result);
+        if (!backup.data) throw new Error('Invalid backup file');
+        
+        if (confirm('This will merge the backup with your current data. Continue?')) {
+          if (backup.data.clients) {
+            backup.data.clients.forEach(c => {
+              if (!clients.find(x => x.email === c.email)) clients.push(c);
+            });
+          }
+          if (backup.data.invoices) {
+            backup.data.invoices.forEach(inv => {
+              if (!invoices.find(x => x.id === inv.id)) invoices.push(inv);
+            });
+          }
+          if (backup.data.users) {
+            backup.data.users.forEach(u => {
+              if (!users.find(x => x.email === u.email)) users.push(u);
+            });
+          }
+          if (backup.data.services) services = backup.data.services;
+          if (backup.data.catalog) catalog = backup.data.catalog;
+          if (backup.data.expenses) expenses = backup.data.expenses;
+          if (backup.data.estimates) estimates = backup.data.estimates;
+          if (backup.data.settings) {
+            settings = { ...settings, ...backup.data.settings };
+            loadSettings();
+          }
+          
+          localStorage.setItem('nashtech_clients', JSON.stringify(clients));
+          localStorage.setItem('nashtech_invoices', JSON.stringify(invoices));
+          localStorage.setItem('nashtech_users', JSON.stringify(users));
+          localStorage.setItem('nashtech_services', JSON.stringify(services));
+          localStorage.setItem('nashtech_catalog', JSON.stringify(catalog));
+          localStorage.setItem('nashtech_expenses', JSON.stringify(expenses));
+          localStorage.setItem('nashtech_estimates', JSON.stringify(estimates));
+          localStorage.setItem('nashtech_settings', JSON.stringify(settings));
+          
+          alert('Backup imported successfully');
+          location.reload();
+        }
+      } catch (err) {
+        alert('Error importing backup: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function exportToCSV(data, filename) {
+    if (!data || data.length === 0) {
+      alert('No data to export');
+      return;
+    }
+    const headers = Object.keys(data[0]);
+    const csv = [
+      headers.join(','),
+      ...data.map(row => headers.map(h => '"' + (row[h] || '').toString().replace(/"/g, '""') + '"').join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportInvoicesCSV() {
+    const data = invoices.map(inv => ({
+      number: inv.number,
+      client: inv.clientName,
+      email: inv.clientEmail,
+      date: inv.date,
+      dueDate: inv.dueDate,
+      status: inv.status,
+      subtotal: inv.subtotal,
+      discount: inv.discount || 0,
+      tax: inv.tax || 0,
+      total: inv.total,
+      notes: inv.notes || ''
+    }));
+    exportToCSV(data, 'invoices-' + new Date().toISOString().split('T')[0] + '.csv');
+  }
+
+  function exportClientsCSV() {
+    const data = clients.map(c => ({
+      name: c.name,
+      email: c.email,
+      phone: c.phone,
+      company: c.company,
+      address: c.address || ''
+    }));
+    exportToCSV(data, 'clients-' + new Date().toISOString().split('T')[0] + '.csv');
+  }
+
+  function exportExpensesCSV() {
+    const data = expenses.map(e => ({
+      date: e.date,
+      category: e.category,
+      description: e.description,
+      amount: e.amount
+    }));
+    exportToCSV(data, 'expenses-' + new Date().toISOString().split('T')[0] + '.csv');
+  }
+
+
   // Helpers
   function getStatusClass(status) {
     const map = { paid: 'success', sent: 'info', draft: 'warning', overdue: 'danger' };
     return map[status] || 'info';
   }
   function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // Data stores
+  let services = JSON.parse(localStorage.getItem('nashtech_services') || '[]');
+  let catalog = JSON.parse(localStorage.getItem('nashtech_catalog') || '[]');
+  let expenses = JSON.parse(localStorage.getItem('nashtech_expenses') || '[]');
+  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');
+
+  // Data stores
+  let services = JSON.parse(localStorage.getItem('nashtech_services') || '[]');
+  let catalog = JSON.parse(localStorage.getItem('nashtech_catalog') || '[]');
+  let expenses = JSON.parse(localStorage.getItem('nashtech_expenses') || '[]');
+  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');
 
   // Initialize
   if (currentUser) {
