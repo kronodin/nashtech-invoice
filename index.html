@@ -1269,14 +1269,17 @@
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
+    console.log('login attempt', email);
     
     // Try exact match first
     let user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+    console.log('login match', user ? 'found' : 'not found');
     
     // If not found and it's admin, force ensure admin exists and retry
     if (!user && email === 'admin@nashtech.com') {
       ensureAdmin();
       user = users.find(u => u.email === 'admin@nashtech.com' && u.password === 'nashtech');
+      console.log('admin retry', user ? 'found' : 'not found');
     }
     
     if (!user) {
@@ -1286,6 +1289,7 @@
     
     currentUser = user;
     localStorage.setItem('nashtech_currentUser', JSON.stringify(currentUser));
+    console.log('login success', currentUser.email);
     enterApp();
   }
 
@@ -1316,6 +1320,7 @@
     if (role === 'admin') {
       ensureAdmin();
       currentUser = users.find(u => u.email === 'admin@nashtech.com');
+      console.log('quickLogin admin', currentUser ? 'found' : 'missing');
       if (currentUser) currentUser._quickLogin = true;
     } else {
       currentUser = {
@@ -1326,6 +1331,7 @@
       };
     }
     localStorage.setItem('nashtech_currentUser', JSON.stringify(currentUser));
+    console.log('quickLogin enterApp', currentUser ? currentUser.email : 'none');
     enterApp();
   }
 
