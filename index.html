@@ -867,14 +867,24 @@
               <textarea id="companyInvoiceTerms" rows="2" placeholder="Payment terms, thank you message, etc.">Payment due within 14 days of invoice date. Thank you for your business.</textarea>
             </div>
             <div class="form-group">
-              <label>Company Logo</label>
+              <label>Login / Sidebar Logo</label>
               <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem">
-                <img id="logoPreview" src="assets/logo.svg" style="width:60px;height:60px;border:1px solid var(--border);border-radius:0.5rem;padding:0.25rem">
-                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('logoUpload').click()">Upload Logo</button>
-                <input type="file" id="logoUpload" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+                <img id="loginLogoPreview" src="assets/logo.svg" style="width:60px;height:60px;border:1px solid var(--border);border-radius:0.5rem;padding:0.25rem">
+                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('loginLogoUpload').click()">Upload Login Logo</button>
+                <input type="file" id="loginLogoUpload" accept="image/*" style="display:none" onchange="handleLoginLogoUpload(this)">
               </div>
-              <input type="text" id="companyLogo" value="assets/logo.svg" placeholder="Logo path or URL">
-              <small style="color:var(--muted);font-size:0.75rem">Upload an image or enter URL</small>
+              <input type="text" id="loginLogo" value="assets/logo.svg" placeholder="Login/sidebar logo path or URL">
+              <small style="color:var(--muted);font-size:0.75rem">Used on login screen and sidebar</small>
+            </div>
+            <div class="form-group">
+              <label>Invoice Logo</label>
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem">
+                <img id="invoiceLogoPreview" src="assets/logo.svg" style="width:60px;height:60px;border:1px solid var(--border);border-radius:0.5rem;padding:0.25rem">
+                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('invoiceLogoUpload').click()">Upload Invoice Logo</button>
+                <input type="file" id="invoiceLogoUpload" accept="image/*" style="display:none" onchange="handleInvoiceLogoUpload(this)">
+              </div>
+              <input type="text" id="invoiceLogo" value="assets/logo.svg" placeholder="Invoice logo path or URL">
+              <small style="color:var(--muted);font-size:0.75rem">Used on invoices and PDFs</small>
             </div>
             <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Profile</button>
           </form>
@@ -1219,9 +1229,9 @@
 
   function handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
-    const user = users.find(u => u.email === email && u.password === password);
+    const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
     
     if (!user) {
       alert('Invalid email or password');
@@ -1295,6 +1305,7 @@
     document.getElementById('appLayout').classList.add('active');
     document.getElementById('userName').textContent = currentUser.name;
     document.getElementById('userRole').textContent = capitalize(currentUser.role);
+    updateLoginLogo();
     
     // Role-based UI
     const isAdmin = currentUser.role === 'admin';
@@ -1667,7 +1678,7 @@
       <body>
         <div class="header">
           <div style="display:flex;align-items:center;gap:15px">
-            ${settings.companyLogo ? `<img src="${settings.companyLogo}" style="height:50px;width:auto">` : ''}
+            ${settings.invoiceLogo ? `<img src="settings.invoiceLogo" style="height:50px;width:auto">` : ''}
             <div>
               <div class="company">${settings.companyName || 'Nash Technologies'}</div>
               <p>${settings.companyAddress || 'Mandeville, Jamaica'}</p>
