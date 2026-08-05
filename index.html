@@ -1576,8 +1576,8 @@
     } else if (discountType === 'fixed') {
       discount = discountValue;
     }
-    const taxRate = parseFloat(settings.taxRate) || 0;
-    const tax = (subtotal - discount) * taxRate / 100;
+    const invTaxRate = parseFloat(settings.taxRate) || 0;
+    const tax = (subtotal - discount) * invTaxRate / 100;
     const total = subtotal - discount + tax;
     
     const totalDisplay = document.getElementById('invoiceTotalDisplay');
@@ -1585,7 +1585,7 @@
       totalDisplay.innerHTML = `
         <p><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</p>
         ${discount > 0 ? `<p><strong>Discount (${discountType === 'percentage' ? discountValue + '%' : '$' + discountValue.toFixed(2)}):</strong> -$${discount.toFixed(2)}</p>` : ''}
-        <p><strong>Tax (${taxRate}%):</strong> $${tax.toFixed(2)}</p>
+        <p><strong>Tax (${invTaxRate}%):</strong> $${tax.toFixed(2)}</p>
         <p style="font-size:1.2rem;font-weight:bold;color:var(--primary)">Total: $${total.toFixed(2)}</p>
       `;
     }
@@ -1608,7 +1608,7 @@
     } else if (discountType === 'fixed') {
       discount = discountValue;
     }
-    const taxRate = parseFloat(settings.taxRate) || 0;
+    const invoiceTaxRate = parseFloat(settings.taxRate) || 0;
     const tax = (subtotal - discount) * taxRate / 100;
     const total = subtotal - discount + tax;
 
