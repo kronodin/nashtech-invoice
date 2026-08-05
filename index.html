@@ -1346,6 +1346,7 @@
     document.getElementById('appLayout').classList.add('active');
     document.getElementById('userName').textContent = currentUser.name;
     document.getElementById('userRole').textContent = capitalize(currentUser.role);
+    if (typeof updateLoginLogo === 'function') updateLoginLogo();
     updateLoginLogo();
     
     // Role-based UI
@@ -2500,6 +2501,49 @@
     exportToCSV(data, 'expenses-' + new Date().toISOString().split('T')[0] + '.csv');
   }
 
+
+  function updateLoginLogo() {
+    const loginLogo = document.getElementById('loginLogo') ? document.getElementById('loginLogo').value : 'assets/logo.svg';
+    const imgs = document.querySelectorAll('.auth-logo img, #sidebarLogo');
+    imgs.forEach(img => {
+      if (loginLogo && loginLogo !== 'assets/logo.svg') {
+        img.src = loginLogo;
+      } else {
+        img.src = 'assets/logo.svg';
+      }
+    });
+  }
+
+  function handleLoginLogoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const dataUrl = e.target.result;
+      document.getElementById('loginLogoPreview').src = dataUrl;
+      document.getElementById('loginLogo').value = dataUrl;
+      settings.loginLogo = dataUrl;
+      localStorage.setItem('nashtech_settings', JSON.stringify(settings));
+      updateLoginLogo();
+      alert('Login logo uploaded successfully');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleInvoiceLogoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const dataUrl = e.target.result;
+      document.getElementById('invoiceLogoPreview').src = dataUrl;
+      document.getElementById('invoiceLogo').value = dataUrl;
+      settings.invoiceLogo = dataUrl;
+      localStorage.setItem('nashtech_settings', JSON.stringify(settings));
+      alert('Invoice logo uploaded successfully');
+    };
+    reader.readAsDataURL(file);
+  }
 
   // Helpers
   function getStatusClass(status) {
