@@ -669,6 +669,109 @@
           </table>
         </div>
       </div>
+<section id="services" class="section">
+      <div class="page-header">
+        <h2>Services</h2>
+        <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="servicesList"></tbody>
+        </table>
+        <div id="noServices" class="empty-state">
+          <p>No services yet. Add your first service above.</p>
+        </div>
+      </div>
+    </section>
+<section id="catalog" class="section">
+      <div class="page-header">
+        <h2>Catalog</h2>
+        <button class="btn btn-primary" onclick="openCatalogModal()">+ Add Product</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>SKU</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="catalogList"></tbody>
+        </table>
+        <div id="noCatalog" class="empty-state">
+          <p>No products in catalog yet.</p>
+        </div>
+      </div>
+    </section>
+<section id="expenses" class="section">
+      <div class="page-header">
+        <h2>Expenses</h2>
+        <div>
+          <button class="btn btn-outline" onclick="exportExpensesCSV()">Export CSV</button>
+          <button class="btn btn-primary" onclick="openExpenseModal()">+ Add Expense</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="expensesList"></tbody>
+        </table>
+        <div id="noExpenses" class="empty-state">
+          <p>No expenses recorded yet.</p>
+        </div>
+      </div>
+    </section>
+<section id="estimates" class="section">
+      <div class="page-header">
+        <h2>Estimates</h2>
+        <button class="btn btn-primary" onclick="openEstimateModal()">+ New Estimate</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Number</th><th>Client</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="estimatesList"></tbody>
+        </table>
+        <div id="noEstimates" class="empty-state">
+          <p>No estimates yet. Create your first estimate above.</p>
+        </div>
+      </div>
+    </section>
+<section id="reports" class="section">
+      <h2>Reports</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-value" id="reportRevenue">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Expenses</div>
+          <div class="stat-value" id="reportExpenses">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Net Profit</div>
+          <div class="stat-value" id="reportProfit">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Outstanding Estimates</div>
+          <div class="stat-value" id="reportEstimates">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Transactions</div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Type</th><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody id="reportsTransactions"></tbody>
+        </table>
+      </div>
+    </section>
 
       <!-- Invoices List -->
       <div class="section" id="invoices">
@@ -944,109 +1047,25 @@
       </div>
     </div>
 
+    
+
+    
+
+    
+
+    
+
+    
+
+
     <div class="footer">
       <strong>Nash Technologies</strong> — Powered by <strong>Microtuff Solutions Inc</strong> | Mandeville, Jamaica
     </div>
-      <section id="services" class="section">
-      <div class="page-header">
-        <h2>Services</h2>
-        <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="servicesList"></tbody>
-        </table>
-      </div>
-      <div id="noServices" class="empty-state">
-        <p>No services yet. Add your first service above.</p>
-      </div>
-    </section>
-    <section id="catalog" class="section">
-      <div class="page-header">
-        <h2>Catalog</h2>
-        <button class="btn btn-primary" onclick="openCatalogModal()">+ Add Product</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr><th>Name</th><th>SKU</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="catalogList"></tbody>
-        </table>
-      </div>
-      <div id="noCatalog" class="empty-state">
-        <p>No products in catalog yet.</p>
-      </div>
-    </section>
-    <section id="expenses" class="section">
-      <div class="page-header">
-        <h2>Expenses</h2>
-        <div>
-          <button class="btn btn-outline" onclick="exportExpensesCSV()">Export CSV</button>
-          <button class="btn btn-primary" onclick="openExpenseModal()">+ Add Expense</button>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="expensesList"></tbody>
-        </table>
-      </div>
-      <div id="noExpenses" class="empty-state">
-        <p>No expenses recorded yet.</p>
-      </div>
-    </section>
-    <section id="estimates" class="section">
-      <div class="page-header">
-        <h2>Estimates</h2>
-        <button class="btn btn-primary" onclick="openEstimateModal()">+ New Estimate</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr><th>Number</th><th>Client</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="estimatesList"></tbody>
-        </table>
-      </div>
-      <div id="noEstimates" class="empty-state">
-        <p>No estimates yet. Create your first estimate above.</p>
-      </div>
-    </section>
-    <section id="reports" class="section">
-      <h2>Reports</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Revenue</div>
-          <div class="stat-value" id="reportRevenue">$0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Expenses</div>
-          <div class="stat-value" id="reportExpenses">$0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Net Profit</div>
-          <div class="stat-value" id="reportProfit">$0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Outstanding Estimates</div>
-          <div class="stat-value" id="reportEstimates">0</div>
-        </div>
-      </div>
-      <div class="table-wrap" style="margin-top:1.5rem">
-        <table class="table">
-          <thead>
-            <tr><th>Type</th><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr>
-          </thead>
-          <tbody id="reportsTransactions"></tbody>
-        </table>
-      </div>
-    </section>
+      
+    
+    
+    
+    
 </main>
 </div>
 
