@@ -2106,9 +2106,9 @@
         </div>
         <div class="form-group">
           <label>Notes</label>
-          <textarea id="estNotes2"" rows="2"></textarea>
+          <textarea id="estNotes" rows="2"></textarea>
         </div>
-        <input type="hidden" id="estEditIndex2"" value="-1">
+        <input type="hidden" id="estEditIndex" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -2210,7 +2210,7 @@
   }
   function openServiceModal() {
     document.getElementById('serviceModalTitle').textContent = 'Add Service';
-    document.getElementById('serviceForm').reset();
+    document.getElementById('serviceModalForm').reset();
     document.getElementById('serviceEditIndex').value = '-1';
     document.getElementById('serviceModal').classList.add('active');
   }
@@ -2272,7 +2272,7 @@
   }
   function openCatalogModal() {
     document.getElementById('catalogModalTitle').textContent = 'Add Product';
-    document.getElementById('catalogForm').reset();
+    document.getElementById('catalogModalForm').reset();
     document.getElementById('catalogEditIndex').value = '-1';
     document.getElementById('catalogModal').classList.add('active');
   }
@@ -2339,7 +2339,7 @@
   }
   function openExpenseModal() {
     document.getElementById('expenseModalTitle').textContent = 'Add Expense';
-    document.getElementById('expenseForm').reset();
+    document.getElementById('expenseModalForm').reset();
     document.getElementById('expenseDate').valueAsDate = new Date();
     document.getElementById('expenseEditIndex').value = '-1';
     document.getElementById('expenseModal').classList.add('active');
