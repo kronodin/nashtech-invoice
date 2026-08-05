@@ -1082,7 +1082,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>Name *</label>
-            <input type="text" id="userName2"" required>
+            <input type="text" id="userName2" required>
           </div>
           <div class="form-group">
             <label>Email *</label>
@@ -1106,7 +1106,7 @@
           </div>
           <div class="form-group">
             <label>Role *</label>
-            <select id="userRole2"" required>
+            <select id="userRole2" required>
               <option value="client">Client</option>
               <option value="admin">Admin</option>
             </select>
@@ -1241,7 +1241,7 @@
 
 
     <div class="modal-body">
-      <form id="estimateForm">
+      <form id="estimateModalForm">
         <div class="form-row">
           <div class="form-group">
             <label>Client *</label>
@@ -1934,7 +1934,7 @@
       <button class="close-btn" onclick="closeServiceModal()">×</button>
     </div>
     <div class="modal-body">
-      <form id="serviceServiceForm"">
+      <form id="serviceForm">
         <div class="form-row">
           <div class="form-group">
             <label>Name *</label>
@@ -1949,7 +1949,7 @@
           <label>Description</label>
           <textarea id="svcDesc" rows="3"></textarea>
         </div>
-        <input type="hidden" id="serviceEditIndex1"" value="-1">
+        <input type="hidden" id="serviceEditIndex2"" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -1967,7 +1967,7 @@
       <button class="close-btn" onclick="closeCatalogModal()">×</button>
     </div>
     <div class="modal-body">
-      <form id="catalogCatalogForm"">
+      <form id="catalogForm">
         <div class="form-row">
           <div class="form-group">
             <label>Name *</label>
@@ -2010,7 +2010,7 @@
       <button class="close-btn" onclick="closeExpenseModal()">×</button>
     </div>
     <div class="modal-body">
-      <form id="expenseExpenseForm"">
+      <form id="expenseForm">
         <div class="form-row">
           <div class="form-group">
             <label>Date *</label>
@@ -2029,7 +2029,7 @@
           <label>Amount *</label>
           <input type="number" id="expAmount" step="0.01" required>
         </div>
-        <input type="hidden" id="expenseEditIndex1"" value="-1">
+        <input type="hidden" id="expenseEditIndex2"" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -2047,7 +2047,7 @@
       <button class="close-btn" onclick="closeEstimateModal()">×</button>
     </div>
     <div class="modal-body">
-      <form id="estimateModalForm"">
+      <form id="estimateForm">
         <div class="form-row">
           <div class="form-group">
             <label>Client *</label>
@@ -2055,17 +2055,17 @@
           </div>
           <div class="form-group">
             <label>Date *</label>
-            <input type="date" id="estDate1"" required>
+            <input type="date" id="estDate" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Valid Until</label>
-            <input type="date" id="estValid1"">
+            <input type="date" id="estValid2"">
           </div>
           <div class="form-group">
             <label>Status</label>
-            <select id="estStatus2"">
+            <select id="estStatus">
               <option value="draft">Draft</option>
               <option value="sent">Sent</option>
               <option value="accepted">Accepted</option>
@@ -2170,7 +2170,19 @@
       companyName: document.getElementById('companyName').value,
       companyEmail: document.getElementById('companyEmail').value,
       companyPhone: document.getElementById('companyPhone').value,
-      companyAddress: document.getElementById('companyAddress').value
+      companyAddress: document.getElementById('companyAddress').value,
+      companyRegisteredName: document.getElementById('companyRegisteredName').value,
+      companyTradingName: document.getElementById('companyTradingName').value,
+      companyTRN: document.getElementById('companyTRN').value,
+      companyWebsite: document.getElementById('companyWebsite').value,
+      companyCurrency: document.getElementById('companyCurrency').value,
+      companyBankDetails: document.getElementById('companyBankDetails').value,
+      companyInvoiceTerms: document.getElementById('companyInvoiceTerms').value,
+      invoicePrefix: document.getElementById('invoicePrefix').value,
+      estimatePrefix: document.getElementById('estimatePrefix').value,
+      taxRate: document.getElementById('taxRate').value,
+      loginLogo: document.getElementById('loginLogo').value,
+      invoiceLogo: document.getElementById('invoiceLogo').value
     };
     localStorage.setItem('nashtech_settings', JSON.stringify(settings));
     alert('Settings saved');
