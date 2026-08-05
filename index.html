@@ -1258,8 +1258,20 @@
 
   function quickLogin(role) {
     if (role === 'admin') {
-      currentUser = users.find(u => u.role === 'admin');
-    if (currentUser) currentUser._quickLogin = true;
+      // Ensure seeded admin exists
+      if (!users.find(u => u.email === 'admin@nashtech.com')) {
+        users.push({
+          name: 'Admin User',
+          email: 'admin@nashtech.com',
+          password: 'Bloodred5',
+          role: 'admin',
+          company: 'Nash Technologies'
+        });
+        localStorage.setItem('nashtech_users', JSON.stringify(users));
+      }
+      // Match seeded admin by credentials
+      currentUser = users.find(u => u.email === 'admin@nashtech.com');
+      if (currentUser) currentUser._quickLogin = true;
     } else {
       currentUser = {
         name: 'Demo Client',
