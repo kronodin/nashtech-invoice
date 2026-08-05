@@ -2506,25 +2506,7 @@
   let services = JSON.parse(localStorage.getItem('nashtech_services') || '[]');
   let catalog = JSON.parse(localStorage.getItem('nashtech_catalog') || '[]');
   let expenses = JSON.parse(localStorage.getItem('nashtech_expenses') || '[]');
-  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');
-
-  // Data stores
-  let services = JSON.parse(localStorage.getItem('nashtech_services') || '[]');
-  let catalog = JSON.parse(localStorage.getItem('nashtech_catalog') || '[]');
-  let expenses = JSON.parse(localStorage.getItem('nashtech_expenses') || '[]');
-  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');
-
-  // Initialize
-  if (currentUser) {
-    loadSettings();
-    enterApp();
-  }
-
-  document.getElementById('invDate').valueAsDate = new Date();
-  const due = new Date();
-  due.setDate(due.getDate() + 30);
-  document.getElementById('invDue').valueAsDate = due;
-</script>
+  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');</script>
 
 </body>
 </html>
