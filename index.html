@@ -477,7 +477,7 @@
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.75rem">Sign In</button>
       <p style="text-align:center;margin-top:1rem;color:var(--muted);font-size:0.85rem">
-        Demo: admin@nashtech.com / Bloodred5
+        Default admin: admin@nashtech.com / nashtech
       </p>
     </form>
 
@@ -889,6 +889,29 @@
             <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Profile</button>
           </form>
         </div>
+        <div class="card" style="margin-top:1.5rem">
+          <div class="card-header"><div class="card-title">Change Admin Password</div></div>
+          <form id="passwordChangeForm" onsubmit="changePassword(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" required>
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <input type="password" id="confirmPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </form>
+        </div>
+      </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -1196,12 +1219,12 @@
   let users = JSON.parse(localStorage.getItem('nashtech_users') || '[]');
   let settings = JSON.parse(localStorage.getItem('nashtech_settings') || '{}');
 
-  // Seed default admin
-  if (!users.find(u => u.email === 'admin@nashtech.com')) {
+  // Seed default admin if no users exist
+  if (users.length === 0) {
     users.push({
       name: 'Admin User',
       email: 'admin@nashtech.com',
-      password: 'Bloodred5',
+      password: 'nashtech',
       role: 'admin',
       company: 'Nash Technologies'
     });
@@ -1273,7 +1296,7 @@
         users.push({
           name: 'Admin User',
           email: 'admin@nashtech.com',
-          password: 'Bloodred5',
+          password: 'nashtech',
           role: 'admin',
           company: 'Nash Technologies'
         });
@@ -1750,6 +1773,44 @@
   }
 
   // Settings
+  function changePassword(e) {
+    e.preventDefault();
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    
+    if (!current || !newPass || !confirm) {
+      alert('All fields required');
+      return;
+    }
+    
+    if (newPass !== confirm) {
+      alert('New passwords do not match');
+      return;
+    }
+    
+    if (newPass.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+    
+    const user = users.find(u => u.id === currentUser.id || u.email === currentUser.email);
+    if (!user) {
+      alert('User not found');
+      return;
+    }
+    
+    if (user.password !== current) {
+      alert('Current password is incorrect');
+      return;
+    }
+    
+    user.password = newPass;
+    localStorage.setItem('nashtech_users', JSON.stringify(users));
+    document.getElementById('passwordChangeForm').reset();
+    alert('Password updated successfully');
+  }
+
   function saveSettings() {
     settings = {
       companyName: document.getElementById('companyName').value,
