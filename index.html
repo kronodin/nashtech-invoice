@@ -335,7 +335,35 @@
   .btn-danger:hover { background: #b91c1c; }
 
   /* Modal */
-  .modal-overlay {
+  
+  .estimate-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+  .estimate-summary input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+  }
+  .item-total {
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .line-item {
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+.modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.5);
@@ -386,6 +414,7 @@
 
   /* Sections */
   .section { display: none; }
+  .section.active { display: block; }
   .section.active { display: block; }
 
   /* Invoice preview */
@@ -918,7 +947,107 @@
     <div class="footer">
       <strong>Nash Technologies</strong> — Powered by <strong>Microtuff Solutions Inc</strong> | Mandeville, Jamaica
     </div>
-  </main>
+      <section id="services" class="section">
+      <div class="page-header">
+        <h2>Services</h2>
+        <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="servicesList"></tbody>
+        </table>
+      </div>
+      <div id="noServices" class="empty-state">
+        <p>No services yet. Add your first service above.</p>
+      </div>
+    </section>
+    <section id="catalog" class="section">
+      <div class="page-header">
+        <h2>Catalog</h2>
+        <button class="btn btn-primary" onclick="openCatalogModal()">+ Add Product</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>SKU</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="catalogList"></tbody>
+        </table>
+      </div>
+      <div id="noCatalog" class="empty-state">
+        <p>No products in catalog yet.</p>
+      </div>
+    </section>
+    <section id="expenses" class="section">
+      <div class="page-header">
+        <h2>Expenses</h2>
+        <div>
+          <button class="btn btn-outline" onclick="exportExpensesCSV()">Export CSV</button>
+          <button class="btn btn-primary" onclick="openExpenseModal()">+ Add Expense</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="expensesList"></tbody>
+        </table>
+      </div>
+      <div id="noExpenses" class="empty-state">
+        <p>No expenses recorded yet.</p>
+      </div>
+    </section>
+    <section id="estimates" class="section">
+      <div class="page-header">
+        <h2>Estimates</h2>
+        <button class="btn btn-primary" onclick="openEstimateModal()">+ New Estimate</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Number</th><th>Client</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="estimatesList"></tbody>
+        </table>
+      </div>
+      <div id="noEstimates" class="empty-state">
+        <p>No estimates yet. Create your first estimate above.</p>
+      </div>
+    </section>
+    <section id="reports" class="section">
+      <h2>Reports</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-value" id="reportRevenue">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Expenses</div>
+          <div class="stat-value" id="reportExpenses">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Net Profit</div>
+          <div class="stat-value" id="reportProfit">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Outstanding Estimates</div>
+          <div class="stat-value" id="reportEstimates">0</div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:1.5rem">
+        <table class="table">
+          <thead>
+            <tr><th>Type</th><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody id="reportsTransactions"></tbody>
+        </table>
+      </div>
+    </section>
+</main>
 </div>
 
 
@@ -1148,12 +1277,31 @@
           <div id="estLineItems">
             <div class="form-row line-item">
               <input type="text" placeholder="Description" class="item-desc">
-              <input type="number" placeholder="Qty" class="item-qty" value="1" min="1">
-              <input type="number" placeholder="Rate" class="item-rate" step="0.01">
+              <input type="number" placeholder="Qty" class="item-qty" value="1" min="1" oninput="calculateEstimate()">
+              <input type="number" placeholder="Rate" class="item-rate" step="0.01" oninput="calculateEstimate()">
+              <span class="item-total">$0.00</span>
               <button type="button" class="btn btn-outline btn-sm" onclick="removeLineItem(this)">✕</button>
             </div>
           </div>
           <button type="button" class="btn btn-outline btn-sm" onclick="addLineItem()" style="margin-top:0.5rem">+ Add Item</button>
+        </div>
+        <div class="form-row estimate-summary">
+          <div class="form-group">
+            <label>Subtotal</label>
+            <input type="text" id="estimateSubtotal" value="$0.00" readonly>
+          </div>
+          <div class="form-group">
+            <label>Tax Rate (%)</label>
+            <input type="number" id="estimateTaxRate" value="0" step="0.01" oninput="calculateEstimate()">
+          </div>
+          <div class="form-group">
+            <label>Tax</label>
+            <input type="text" id="estimateTax" value="$0.00" readonly>
+          </div>
+          <div class="form-group">
+            <label>Total</label>
+            <input type="text" id="estimateTotal" value="$0.00" readonly>
+          </div>
         </div>
         <div class="form-group">
           <label>Notes</label>
@@ -2543,6 +2691,33 @@
       alert('Invoice logo uploaded successfully');
     };
     reader.readAsDataURL(file);
+  }
+
+
+  // Estimate Calculator
+  function calculateEstimate() {
+    const items = document.querySelectorAll('#estimateItems .estimate-item');
+    let subtotal = 0;
+    let tax = 0;
+    let total = 0;
+
+    items.forEach(item => {
+      const qty = parseFloat(item.querySelector('.item-qty').value) || 0;
+      const price = parseFloat(item.querySelector('.item-price').value) || 0;
+      const itemTotal = qty * price;
+      item.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
+      subtotal += itemTotal;
+    });
+
+    const taxRate = parseFloat(document.getElementById('estimateTaxRate')?.value || 0) || 0;
+    tax = subtotal * taxRate / 100;
+    total = subtotal + tax;
+
+    document.getElementById('estimateSubtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('estimateTax').textContent = '$' + tax.toFixed(2);
+    document.getElementById('estimateTotal').textContent = '$' + total.toFixed(2);
+
+    return { subtotal, tax, total };
   }
 
   // Helpers
