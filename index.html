@@ -1302,7 +1302,7 @@
           <label>Notes</label>
           <textarea id="estNotes" rows="2"></textarea>
         </div>
-        <input type="hidden" id="estimateEditIndex" value="-1">
+        <input type="hidden" id="estEditIndex" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -1948,7 +1948,7 @@
           <label>Description</label>
           <textarea id="svcDesc" rows="3"></textarea>
         </div>
-        <input type="hidden" id="serviceEditIndex" value="-1">
+        <input type="hidden" id="serviceEditIndex1"" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -2028,7 +2028,7 @@
           <label>Amount *</label>
           <input type="number" id="expAmount" step="0.01" required>
         </div>
-        <input type="hidden" id="expenseEditIndex" value="-1">
+        <input type="hidden" id="expenseEditIndex1"" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -2054,13 +2054,13 @@
           </div>
           <div class="form-group">
             <label>Date *</label>
-            <input type="date" id="estDate" required>
+            <input type="date" id="estDate1"" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Valid Until</label>
-            <input type="date" id="estValid">
+            <input type="date" id="estValid1"">
           </div>
           <div class="form-group">
             <label>Status</label>
@@ -2107,7 +2107,7 @@
           <label>Notes</label>
           <textarea id="estNotes" rows="2"></textarea>
         </div>
-        <input type="hidden" id="estimateEditIndex" value="-1">
+        <input type="hidden" id="estEditIndex" value="-1">
       </form>
     </div>
     <div class="modal-footer">
@@ -2395,9 +2395,9 @@
   function openEstimateModal() {
     document.getElementById('estimateModalTitle').textContent = 'New Estimate';
     document.getElementById('estimateForm').reset();
-    document.getElementById('estimateDate').valueAsDate = new Date();
+    document.getElementById('estDate').valueAsDate = new Date();
     document.getElementById('estValid').valueAsDate = (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d; })();
-    document.getElementById('estimateEditIndex').value = '-1';
+    document.getElementById('estEditIndex').value = '-1';
     populateEstimateClientSelect();
     document.getElementById('estimateModal').classList.add('active');
   }
@@ -2427,7 +2427,7 @@
     if (!client) return alert('Please add a client first');
     const items = getEstimateLineItems();
     if (items.length === 0) return alert('Add at least one line item');
-    const idx = parseInt(document.getElementById('estimateEditIndex').value);
+    const idx = parseInt(document.getElementById('estEditIndex').value);
     const est = {
       id: Date.now().toString(),
       number: 'EST-' + String(estimates.length + 1).padStart(4, '0'),
