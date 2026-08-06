@@ -1361,6 +1361,10 @@
   let invoices = JSON.parse(localStorage.getItem('nashtech_invoices') || '[]');
   let users = JSON.parse(localStorage.getItem('nashtech_users') || '[]');
   let settings = JSON.parse(localStorage.getItem('nashtech_settings') || '{}');
+  let services = JSON.parse(localStorage.getItem('nashtech_services') || '[]');
+  let catalog = JSON.parse(localStorage.getItem('nashtech_catalog') || '[]');
+  let expenses = JSON.parse(localStorage.getItem('nashtech_expenses') || '[]');
+  let estimates = JSON.parse(localStorage.getItem('nashtech_estimates') || '[]');
 
   // Ensure default admin always exists with correct credentials
   const adminIndex = users.findIndex(u => u.email === 'admin@nashtech.com');
@@ -1760,7 +1764,7 @@
       discount = discountValue;
     }
     const invoiceTaxRate = parseFloat(settings.taxRate) || 0;
-    const tax = (subtotal - discount) * taxRate / 100;
+    const tax = (subtotal - discount) * invoiceTaxRate / 100;
     const total = subtotal - discount + tax;
 
     const invoice = {
@@ -2210,7 +2214,7 @@
   }
   function openServiceModal() {
     document.getElementById('serviceModalTitle').textContent = 'Add Service';
-    document.getElementById('serviceModalForm').reset();
+    document.getElementById('serviceForm').reset();
     document.getElementById('serviceEditIndex').value = '-1';
     document.getElementById('serviceModal').classList.add('active');
   }
@@ -2272,7 +2276,7 @@
   }
   function openCatalogModal() {
     document.getElementById('catalogModalTitle').textContent = 'Add Product';
-    document.getElementById('catalogModalForm').reset();
+    document.getElementById('catalogForm').reset();
     document.getElementById('catalogEditIndex').value = '-1';
     document.getElementById('catalogModal').classList.add('active');
   }
