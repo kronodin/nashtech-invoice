@@ -2112,7 +2112,7 @@
   }
   function openExpenseModal() {
     document.getElementById('expenseModalTitle').textContent = 'Add Expense';
-    document.getElementById('expenseModalForm').reset();
+    document.getElementById('expenseForm').reset();
     document.getElementById('expenseDate').valueAsDate = new Date();
     document.getElementById('expenseEditIndex').value = '-1';
     document.getElementById('expenseModal').classList.add('active');
@@ -2180,8 +2180,8 @@
   }
   function openEstimateModal() {
     document.getElementById('estimateModalTitle').textContent = 'New Estimate';
-    document.getElementById('estimateModalForm').reset();
-    document.getElementById('estDate').valueAsDate = new Date();
+    document.getElementById('estimateForm').reset();
+    document.getElementById('estDate').valueAsDateien
     document.getElementById('estValid').valueAsDate = (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d; })();
     document.getElementById('estEditIndex').value = '-1';
     populateEstimateClientSelect();
